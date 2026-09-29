@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AL FAIZ ONLINE - Rate & Review Us</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom scrollbar styling for seamless mobile scrolling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .custom-shadow {
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen pb-10">
+
+  <!-- Container -->
+  <div class="max-w-xl mx-auto px-4 pt-6">
+    
+    <!-- Top Card / Header -->
+    <div class="bg-white rounded-2xl p-6 text-center custom-shadow mb-4 border border-slate-100">
+      <!-- Custom Image Logo from Google Drive -->
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full mb-3 p-1 shadow-md border border-slate-200 overflow-hidden">
+        <img 
+          src="https://lh3.googleusercontent.com/d/11ISaLFPpTtH3Rlg6OKXdpWiJt0BXMwLQ" 
+          alt="AL FAIZ CSC Logo" 
+          class="w-full h-full object-cover rounded-full"
+          onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=AL+FAIZ';"
+        />
+      </div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">AL FAIZ ONLINEs - JUGUL</h1>
+      <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider mt-1">Digital Services & E-Governance</p>
+      <p class="text-sm text-slate-500 mt-2">Select your favorite review below to share your feedback on Google!</p>
+      
+      <!-- Quick Info Tag -->
+      <div class="mt-4 bg-amber-50 border border-amber-200/60 rounded-xl p-3 text-left flex items-start gap-3">
+        <span class="text-xl">💡</span>
+        <div class="text-xs text-amber-900 leading-relaxed">
+          <strong>How it works:</strong> Tap any review option. The text auto-copies to your clipboard, and Google Review opens automatically. Simply <strong>Long-Press & Paste</strong> into the Google box!
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter Bar (Sticky) -->
+    <div class="sticky top-2 z-30 bg-slate-100/90 backdrop-blur-md pt-1 pb-3">
+      <!-- Search Input -->
+      <div class="relative mb-3">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Search reviews (e.g. Aadhaar, Fast, Owner, Clean)..." 
+          class="w-full bg-white border border-slate-200 text-sm rounded-xl pl-10 pr-10 py-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all custom-shadow"
+          onkeyup="filterReviews()"
+        />
+        <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <button id="clearSearch" onclick="clearSearchInput()" class="hidden absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600">
+          ✕
+        </button>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-medium">
+        <button onclick="setCategory('All')" class="category-btn active px-3.5 py-2 rounded-xl border bg-blue-600 text-white border-blue-600 whitespace-nowrap transition-all shadow-sm">All Reviews (<span id="countAll">0</span>)</button>
+        <button onclick="setCategory('Fast')" class="category-btn px-3.5 py-2 rounded-xl border bg-white text-slate-600 border-slate-200 whitespace-nowrap hover:bg-slate-50 transition-all">⚡ Fast Service</button>
+        <button onclick="setCategory('Aadhaar')" class="category-btn px-3.5 py-2 rounded-xl border bg-white text-slate-600 border-slate-200 whitespace-nowrap hover:bg-slate-50 transition-all">🆔 Aadhaar & PAN</button>
+        <button onclick="setCategory('Owner')" class="category-btn px-3.5 py-2 rounded-xl border bg-white text-slate-600 border-slate-200 whitespace-nowrap hover:bg-slate-50 transition-all">👨‍💼 Friendly Behavior</button>
+        <button onclick="setCategory('Short')" class="category-btn px-3.5 py-2 rounded-xl border bg-white text-slate-600 border-slate-200 whitespace-nowrap hover:bg-slate-50 transition-all">🎯 Quick & Short</button>
+      </div>
+    </div>
+
+    <!-- Review Cards Container -->
+    <div id="reviewContainer" class="space-y-3">
+      <!-- Cards dynamically injected via JavaScript -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-10">
+      <div class="text-4xl mb-2">🔍</div>
+      <p class="text-sm font-semibold text-slate-600">No matching reviews found</p>
+      <p class="text-xs text-slate-400 mt-1">Try searching for something else like "fast", "Aadhaar", or "excellent".</p>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification Modal -->
+  <div id="toast" class="fixed inset-x-4 bottom-6 max-w-sm mx-auto bg-slate-900/95 backdrop-blur text-white text-xs font-medium px-4 py-3.5 rounded-2xl shadow-2xl flex items-center justify-between gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50 pointer-events-none">
+    <div class="flex items-center gap-2.5">
+      <span class="text-emerald-400 text-base">✅</span>
+      <span>Review copied! Opening Google Maps...</span>
+    </div>
+    <span class="bg-blue-600 text-white text-[10px] uppercase font-bold px-2 py-1 rounded-md">Paste Mode</span>
+  </div>
+
+  <script>
+    const targetUrl = "https://search.google.com/local/writereview?placeid=ChIJkwCDz3TZwDsREDait6EhNGg";
+
+    // 200 Tailored 5-Star English Reviews for AL FAIZ CSC
+    const reviewData = [
+      // 1-20: Top Highlights & General Excellence
+      { cat: ["Fast", "Owner"], text: "Best CSC Center in area with excellent service! ⭐⚡" },
+      { cat: ["Fast"], text: "Very fast online service and excellent customer support. Highly recommended! 👍🚀" },
+      { cat: ["Aadhaar"], text: "Best Shop and Best Centre for all government online work. 💯🔥" },
+      { cat: ["Owner"], text: "Very honest, helpful and professional online service center. 👌🌟" },
+      { cat: ["Aadhaar", "Fast"], text: "Fastest Aadhaar, PAN card and Online application work in Jugul. Top quality center! 🆔💻" },
+      { cat: ["Owner", "Fast"], text: "Best Online Cyber Cafe with polite behavior and fast documentation. 😊📄" },
+      { cat: ["Fast", "Short"], text: "Excellent experience! Quick solution for all online work. 🎉✅" },
+      { cat: ["Aadhaar"], text: "Genuine and reliable CSC centre with top class service. 🏆✨" },
+      { cat: ["Owner"], text: "Very knowledgeable owner and super fast service. Best shop in area. 👨‍💻💫" },
+      { cat: ["Short"], text: "Great service for money transfer, certificates and online work. 💸📄" },
+      { cat: ["Fast"], text: "Quick and hassle-free online service. Highly satisfied! 👍😊" },
+      { cat: ["Aadhaar"], text: "Top-notch service for all online form filling and government work. 📑🌐" },
+      { cat: ["Owner"], text: "Extremely polite staff and super prompt response! ⭐💯" },
+      { cat: ["Aadhaar"], text: "One of the best CSC outlets with reliable work completion. 🌟📌" },
+      { cat: ["Fast"], text: "Fast printing, scanning, and digital application services. 🖨️📱" },
+      { cat: ["Short"], text: "Very affordable fees and transparent process. ⭐🙌" },
+      { cat: ["Aadhaar", "Fast"], text: "Super fast Aadhaar and PAN card updates. Thank you! 🆔🎯" },
+      { cat: ["Owner"], text: "Friendly behavior and expert guidance for all online work. 🤗💡" },
+      { cat: ["Short"], text: "Clean environment and efficient service delivery. 🧼⚡" },
+      { cat: ["Aadhaar"], text: "Best place for all digital and e-Governance services! 🌐🚀" },
+
+      // 21-40: Quick & Short Reviews
+      { cat: ["Short"], text: "Always helpful and quick in completing online forms. 📝✨" },
+      { cat: ["Fast", "Short"], text: "Highly professional service with zero waiting time! ⏱️⭐" },
+      { cat: ["Fast"], text: "Best cyber hub in Jugul for fast internet and printing. 💻🌐" },
+      { cat: ["Fast", "Short"], text: "Got my certificates printed in just a few minutes. Great job! 📄👍" },
+      { cat: ["Short"], text: "Very reliable center for all banking and online transactions. 💳💸" },
+      { cat: ["Owner"], text: "Outstanding support and genuine guidance every single time. 🌟🤝" },
+      { cat: ["Fast"], text: "100% recommended for fast documentation work! 📑📌" },
+      { cat: ["Short"], text: "Prompt service with great attention to detail. ⭐👌" },
+      { cat: ["Aadhaar"], text: "Great experience for scholarship and job online applications. 🎓💻" },
+      { cat: ["Short"], text: "Very smooth process for all e-services! ⚡🌟" },
+      { cat: ["Owner"], text: "Professionalism at its best. Thank you AL FAIZ CSC! 👏🔥" },
+      { cat: ["Fast"], text: "Super fast online processing with total honesty. 💯📄" },
+      { cat: ["Owner"], text: "Best customer care and very supportive behavior. 😊📍" },
+      { cat: ["Fast"], text: "Exceptional service speed and accurate work execution! 🚀⭐" },
+      { cat: ["Aadhaar"], text: "All-in-one digital solution center for everyone. 🌐💫" },
+      { cat: ["Short"], text: "Very convenient location and reliable services. 📍🗺️" },
+      { cat: ["Fast"], text: "Quick money transfer and fast e-bill payments. 💸📑" },
+      { cat: ["Short"], text: "Always satisfied with their top quality service! 👍🎉" },
+      { cat: ["Short"], text: "Best online cyber cafe in the town! 💻🔥" },
+      { cat: ["Short"], text: "Smooth, easy and hassle-free experience every time. ✨🎯" },
+
+      // 41-60: Aadhaar & PAN Card Focused
+      { cat: ["Aadhaar"], text: "Super quick Aadhaar correction service. Saved my time! 🆔✨" },
+      { cat: ["Aadhaar", "Fast"], text: "Got my new PAN card application done within 10 minutes! 🪪⚡" },
+      { cat: ["Aadhaar"], text: "Best center for official document updates and printouts. 📄📌" },
+      { cat: ["Aadhaar", "Owner"], text: "The owner helped me correct my details on Aadhaar smoothly. 🆔🙏" },
+      { cat: ["Aadhaar"], text: "Very reliable for biometric updates and e-KYC verification. 🖐️💻" },
+      { cat: ["Aadhaar", "Fast"], text: "Instant PVC card printing service available here! Excellent. 💳🌟" },
+      { cat: ["Aadhaar"], text: "Perfect place for Voter ID, Ration Card, and Aadhaar work. 🎟️🌐" },
+      { cat: ["Aadhaar"], text: "Fastest digital identity services in Jugul. ⭐👌" },
+      { cat: ["Aadhaar"], text: "Accurate online data entry with zero errors. Highly trusted! 🎯📑" },
+      { cat: ["Aadhaar"], text: "Clear instructions and fast processing of government ID cards. 🪪✨" },
+      { cat: ["Aadhaar"], text: "Got my income certificate applied quickly without any issue. 📜👍" },
+      { cat: ["Aadhaar"], text: "Best e-Governance portal helper in the entire locality. 🌐⭐" },
+      { cat: ["Aadhaar"], text: "Hassle-free Caste & Residence certificate applications. 📑✨" },
+      { cat: ["Aadhaar"], text: "Top service center for all central and state govt forms. 🏛️💻" },
+      { cat: ["Aadhaar"], text: "Instant download and print of government certificates! 🖨️📄" },
+      { cat: ["Aadhaar"], text: "Smooth digital verification for job application forms. 💼📝" },
+      { cat: ["Aadhaar"], text: "Very dependable place for updating official mobile numbers on IDs. 📱🪪" },
+      { cat: ["Aadhaar"], text: "Professional handling of sensitive personal identity documents. 🔒📄" },
+      { cat: ["Aadhaar"], text: "Best place for senior citizens to get their e-services done easily. 👴👵✨" },
+      { cat: ["Aadhaar"], text: "Fastest online verification service in the neighborhood. ⚡🎯" },
+
+      // 61-80: Customer Service & Staff Behavior
+      { cat: ["Owner"], text: "The owner is very respectful, honest, and hardworking. 👨‍💼👏" },
+      { cat: ["Owner"], text: "Great hospitality and expert technical knowledge. 💡😊" },
+      { cat: ["Owner"], text: "They guide customers very clearly about every process. 🗣️📋" },
+      { cat: ["Owner"], text: "Super friendly owner who treats everyone with patience. ❤️🤝" },
+      { cat: ["Owner"], text: "Always ready to help even during busy rush hours! 🕒🙌" },
+      { cat: ["Owner"], text: "Honest advice given for all online service queries. 💯✨" },
+      { cat: ["Owner"], text: "Best service mindset! Never overcharges for any work. 💰👍" },
+      { cat: ["Owner"], text: "Respectful behavior and very cooperative atmosphere. 🌸💼" },
+      { cat: ["Owner"], text: "The owner goes out of his way to help complete urgent forms. 🏃‍♂️💨" },
+      { cat: ["Owner"], text: "Highly experienced operator who knows all online work tricks. 🛠️💻" },
+      { cat: ["Owner"], text: "Polite demeanor and quick resolution for all doubts. 💬😊" },
+      { cat: ["Owner"], text: "Always smiling and giving 100% satisfaction to customers! 😀⭐" },
+      { cat: ["Owner"], text: "You can trust them blindly with your official documentation. 🛡️📄" },
+      { cat: ["Owner"], text: "Well organized shop with courteous customer support. 🏪👍" },
+      { cat: ["Owner"], text: "Great communication and very fast typing skills! ⌨️⚡" },
+      { cat: ["Owner"], text: "Wonderful service experience every time I visit AL FAIZ CSC. 🌟🎉" },
+      { cat: ["Owner"], text: "Top-tier professionalism coupled with humble behavior. 🙏✨" },
+      { cat: ["Owner"], text: "Clean and disciplined operational setup. 👏📌" },
+      { cat: ["Owner"], text: "They explain all charges upfront before starting the work. 💡💰" },
+      { cat: ["Owner"], text: "A truly customer-centric CSC center in our locality! ❤️🏪" },
+
+      // 81-100: Speed, Efficiency & Technology
+      { cat: ["Fast"], text: "High speed computer systems and instant printing available. 💻🖨️" },
+      { cat: ["Fast"], text: "Lightning fast internet connection ensures zero server delay! ⚡🌐" },
+      { cat: ["Fast"], text: "Completed my online fee submission within seconds. ⏱️💳" },
+      { cat: ["Fast"], text: "No unnecessary waiting time. Work gets done immediately! 🚀🎯" },
+      { cat: ["Fast"], text: "Super efficient workflow and fast document scanning. 📑⚡" },
+      { cat: ["Fast"], text: "Instant printout quality with dark crisp text and photos. 📸🖨️" },
+      { cat: ["Fast"], text: "Fast direct money transfer service without network issues. 💸📶" },
+      { cat: ["Fast"], text: "Rapid response time for urgent exam admit cards download. 🎓📜" },
+      { cat: ["Fast"], text: "Very prompt computer operator who completes tasks quickly. ⚡👨‍💻" },
+      { cat: ["Fast"], text: "Fastest photo copy and laminated card service! 🪪✨" },
+      { cat: ["Fast"], text: "Quick online form uploads even when servers are slow elsewhere. 🌐⚡" },
+      { cat: ["Fast"], text: "Speedy ticket booking and printout services. 🎫✈️" },
+      { cat: ["Fast"], text: "Express online services at affordable regular rates. ⏱️💵" },
+      { cat: ["Fast"], text: "Prompt assistance for emergency online submissions. 🚨💻" },
+      { cat: ["Fast"], text: "Fast PDF creation, merging, and printing facility. 📄📌" },
+      { cat: ["Fast"], text: "Quick online verification of bank accounts and IDs. 🏦💳" },
+      { cat: ["Fast"], text: "Super active center with quick turnaround time for customers. 🔄⚡" },
+      { cat: ["Fast"], text: "Fast, smooth, and dependable service overall! ⭐🚀" },
+      { cat: ["Fast"], text: "Fastest online cyber service shop in the entire area! 🌐🔥" },
+      { cat: ["Fast"], text: "Work finished before expected time! Very happy. 🎉⌛" },
+
+      // 101-120: Money Transfer, Banking & Cyber Services
+      { cat: ["Short"], text: "Safe and secure money transfer shop in Jugul. 🔒💸" },
+      { cat: ["Short"], text: "Instant AEPS cash withdrawal and balance inquiry. 💵🏦" },
+      { cat: ["Short"], text: "Best place for utility bill payments (Electricity, Water, DTH). 💡📺" },
+      { cat: ["Short"], text: "Reliable online financial services under one roof. 💳✨" },
+      { cat: ["Short"], text: "Instant mobile recharges and DTH activation center. 📱🔌" },
+      { cat: ["Short"], text: "Very convenient money deposit facility with receipt given. 🧾💵" },
+      { cat: ["Short"], text: "Best shop for buying insurance policies and renewal. 🛡️📑" },
+      { cat: ["Short"], text: "Instant FASTag recharge and vehicle documentation! 🚗🎟️" },
+      { cat: ["Short"], text: "Safe digital payment gateway assistance for beginners. 📲💸" },
+      { cat: ["Short"], text: "Reliable DBT scholarship and scheme application submission. 🎓🏛️" },
+      { cat: ["Short"], text: "Very honest cash withdrawal service using Aadhaar card. 🖐️💵" },
+      { cat: ["Short"], text: "Best center for downloading Provident Fund (PF) details. 💼📄" },
+      { cat: ["Short"], text: "Quick Ayushman Bharat card generation center. 🏥🎟️" },
+      { cat: ["Short"], text: "E-Shram card creation done with full accuracy! 👷‍♂️📄" },
+      { cat: ["Short"], text: "PM-Kisan scheme registration support available here. 🌾🚜" },
+      { cat: ["Short"], text: "Instant color printout for color certificates and photos. 🌈🖨️" },
+      { cat: ["Short"], text: "Passport application submission done smoothly here! ✈️📘" },
+      { cat: ["Short"], text: "Best cyber center for college application submissions. 🏫💻" },
+      { cat: ["Short"], text: "Reliable internet cafe for all digital needs! 💻🌐" },
+      { cat: ["Short"], text: "Great assistance for senior citizen pension updates. 👴📜" },
+
+      // 121-140: One-Liners & Short Positive Reviews
+      { cat: ["Short"], text: "5 Star service quality! ⭐⭐⭐⭐⭐" },
+      { cat: ["Short"], text: "Simply the best CSC center! 🏆" },
+      { cat: ["Short"], text: "Fully satisfied with AL FAIZ CSC! 😊" },
+      { cat: ["Short"], text: "Highly recommended online store! 👍" },
+      { cat: ["Short"], text: "Top quality digital work! 🌟" },
+      { cat: ["Short"], text: "Fastest work completion! ⚡" },
+      { cat: ["Short"], text: "Great job! Keep it up! 👏" },
+      { cat: ["Short"], text: "Honest, quick, and reliable! 💯" },
+      { cat: ["Short"], text: "Best experience ever! 🎉" },
+      { cat: ["Short"], text: "Always 100% accurate work. 🎯" },
+      { cat: ["Short"], text: "Super clean and fast center. 🧼" },
+      { cat: ["Short"], text: "Best cyber cafe in Jugul. 💻" },
+      { cat: ["Short"], text: "Five stars for great customer care! ⭐" },
+      { cat: ["Short"], text: "Aadhaar & PAN card experts! 🪪" },
+      { cat: ["Short"], text: "Very supportive and trustworthy. 🤝" },
+      { cat: ["Short"], text: "Quick solutions for all online forms! 📝" },
+      { cat: ["Short"], text: "Affordable price and fast output. 💰" },
+      { cat: ["Short"], text: "Superb speed and clean printouts. 🖨️" },
+      { cat: ["Short"], text: "My favorite CSC center! ❤️" },
+      { cat: ["Short"], text: "Excellent e-Governance hub! 🌐" },
+
+      // 141-160: Detailed & Trust-Building Reviews
+      { cat: ["Aadhaar", "Owner"], text: "I visit AL FAIZ CSC for all my family's government document updates. Highly trustworthy! 👨‍👩‍👧‍👦📄" },
+      { cat: ["Fast"], text: "They double check every single detail before final form submission. Great accuracy! 🔍📝" },
+      { cat: ["Owner"], text: "The owner explains all steps clearly so you never feel confused. Super helpful! 💡🗣️" },
+      { cat: ["Aadhaar"], text: "Applied for PAN card here and received it without any problem. Smooth process! 🪪📩" },
+      { cat: ["Fast"], text: "They handle long queues very efficiently without compromising on quality. 👥⚡" },
+      { cat: ["Owner"], text: "Very polite, gentle, and tech-savvy person running the shop. 👌👨‍💻" },
+      { cat: ["Aadhaar"], text: "Clean photo captures for passport photos and online applications. 📸✨" },
+      { cat: ["Short"], text: "Best digital services shop in the entire market. Zero hassle! 🛍️⚡" },
+      { cat: ["Fast"], text: "They saved my last-day exam form submission with their fast speed! 🎓🚨" },
+      { cat: ["Owner"], text: "Fair pricing with proper digital payment options available. 💵📱" },
+      { cat: ["Aadhaar"], text: "Excellent place for updating biometric data and demographic details. 🖐️💻" },
+      { cat: ["Owner"], text: "Always patient while typing long names and complex addresses. ⌨️✍️" },
+      { cat: ["Short"], text: "One stop shop for all computer, internet, and application needs. 💻📌" },
+      { cat: ["Fast"], text: "High resolution scanning and clear lamination services. 📄✨" },
+      { cat: ["Owner"], text: "They treat every customer with utmost respect and urgency. 🙏🔥" },
+      { cat: ["Aadhaar"], text: "Very happy with my Aadhaar card name correction. Done perfectly! 🆔✅" },
+      { cat: ["Fast"], text: "Immediate printout of online payment receipts provided every time. 🧾👍" },
+      { cat: ["Owner"], text: "Best online guide for government scheme eligibility. 💡🏛️" },
+      { cat: ["Short"], text: "Fastest document downloading center! ⭐💻" },
+      { cat: ["Owner"], text: "Thank you AL FAIZ CSC for your incredible support! 🎉🌟" },
+
+      // 161-180: Additional High-Quality Varied Reviews
+      { cat: ["Fast"], text: "Super quick scan, copy, and print services with reasonable rates! 🖨️💵" },
+      { cat: ["Aadhaar"], text: "Got my voter card updated in first attempt. Very happy! 🎟️✨" },
+      { cat: ["Owner"], text: "Very cooperative owner who understands urgent requirements. 🤝⌛" },
+      { cat: ["Short"], text: "Top grade online application submission quality! 📄🎯" },
+      { cat: ["Fast"], text: "Never had to wait long for any document printing work. ⏱️🖨️" },
+      { cat: ["Aadhaar"], text: "Accurate online data entry for scholarship applications. 🎓📑" },
+      { cat: ["Owner"], text: "Friendly staff with high professional standards. 🌟💼" },
+      { cat: ["Short"], text: "Always accurate, fast, and polite service! 😊💯" },
+      { cat: ["Fast"], text: "Lightning fast processing of money transfers and bills! 💸⚡" },
+      { cat: ["Aadhaar"], text: "Smooth handling of all government identity services. 🪪📜" },
+      { cat: ["Short"], text: "100% genuine CSC center with reliable results. 🏆✨" },
+      { cat: ["Owner"], text: "He guides you on necessary documents before applying. Saved my trips! 📋🚶‍♂️" },
+      { cat: ["Fast"], text: "Quick emergency printing service when everywhere else was closed! 🚨🖨️" },
+      { cat: ["Aadhaar"], text: "Best center for Ration Card online applications and updates. 🎟️🌾" },
+      { cat: ["Short"], text: "Super smooth digital experience! 🌟🚀" },
+      { cat: ["Owner"], text: "Knowledgeable, quick, and soft spoken owner. ⭐👨‍💼" },
+      { cat: ["Fast"], text: "Got my driving license online application done in a flash! 🚗⚡" },
+      { cat: ["Short"], text: "Very organized documentation process! 📁👍" },
+      { cat: ["Aadhaar"], text: "Authentic e-Mitra / CSC work center in our area. 🏛️💻" },
+      { cat: ["Short"], text: "Full 5 Stars for excellence in service! ⭐⭐⭐⭐⭐" },
+
+      // 181-200: Ultimate Recommended Reviews
+      { cat: ["Owner"], text: "AL FAIZ CSC is the most trusted shop in Jugul for online work! 🏆📍" },
+      { cat: ["Fast"], text: "Quick execution, zero errors, and polite interaction! 👌⚡" },
+      { cat: ["Aadhaar"], text: "My Aadhaar phone number update was processed very quickly! 📱🆔" },
+      { cat: ["Owner"], text: "Honest guy who gives right advice for all e-services. 💡🤝" },
+      { cat: ["Short"], text: "Flawless service every single visit! 🎉" },
+      { cat: ["Fast"], text: "Fastest online cyber center in the vicinity! 💻🔥" },
+      { cat: ["Aadhaar"], text: "Extremely reliable for official certificate verifications. 📜✅" },
+      { cat: ["Owner"], text: "Great experience working with AL FAIZ CSC. High quality! 🌟📌" },
+      { cat: ["Short"], text: "Superb center for instant digital solutions! ⚡🌐" },
+      { cat: ["Fast"], text: "Very prompt computer typing and form filling speed. ⌨️💨" },
+      { cat: ["Aadhaar"], text: "All digital services completed cleanly without hassle. 🪪📑" },
+      { cat: ["Owner"], text: "Punctual, efficient, and very helpful service provider! 🕒👨‍💼" },
+      { cat: ["Short"], text: "Unmatched quality of customer satisfaction! ❤️💯" },
+      { cat: ["Fast"], text: "Got my printouts in ultra dark high quality instantly! 🖨️✨" },
+      { cat: ["Aadhaar"], text: "Reliable government form submission partner! 🏛️📑" },
+      { cat: ["Owner"], text: "Always welcoming customers with good behavior! 😊🤝" },
+      { cat: ["Short"], text: "Top-notch performance for all digital services! 🚀⭐" },
+      { cat: ["Fast"], text: "Extremely fast document uploads with zero lag! ⚡💻" },
+      { cat: ["Aadhaar"], text: "Best CSC center for overall digital governance services! 🌐📜" },
+      { cat: ["Short"], text: "Highly satisfied customer! 5/5 Stars! ⭐⭐⭐⭐⭐" }
+    ];
+
+    let currentCategory = "All";
+
+    // Count total items
+    document.getElementById('countAll').innerText = reviewData.length;
+
+    // Render Cards
+    function renderReviews(data) {
+      const container = document.getElementById('reviewContainer');
+      const emptyState = document.getElementById('emptyState');
+      
+      container.innerHTML = '';
+
+      if (data.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      data.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "bg-white border border-slate-200/80 rounded-xl p-3.5 custom-shadow cursor-pointer active:scale-[0.99] hover:border-blue-500 transition-all flex items-center justify-between gap-3 group";
+        
+        // Escape quotes for safe string passing
+        const safeText = item.text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+        card.setAttribute('onclick', `copyAndRedirect('${safeText}')`);
+
+        card.innerHTML = `
+          <div class="flex-1 pr-1">
+            <div class="text-amber-400 text-xs tracking-wider mb-1">⭐⭐⭐⭐⭐</div>
+            <p class="text-xs sm:text-sm font-medium text-slate-800 leading-snug group-hover:text-blue-600 transition-colors">
+              "${item.text}"
+            </p>
+          </div>
+          <button class="bg-blue-600 group-hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1 shrink-0 shadow-sm transition-all">
+            <span>Copy</span>
+            <span class="text-[10px]">➔</span>
+          </button>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Filter Logic
+    function filterReviews() {
+      const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+      const clearBtn = document.getElementById('clearSearch');
+
+      if (searchVal.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+
+      const filtered = reviewData.filter(item => {
+        const matchesCategory = (currentCategory === "All") || item.cat.includes(currentCategory);
+        const matchesSearch = item.text.toLowerCase().includes(searchVal);
+        return matchesCategory && matchesSearch;
+      });
+
+      renderReviews(filtered);
+    }
+
+    function setCategory(category) {
+      currentCategory = category;
+      
+      // Update UI active buttons
+      const buttons = document.querySelectorAll('.category-btn');
+      buttons.forEach(btn => {
+        if (btn.textContent.includes(category) || (category === 'All' && btn.textContent.includes('All'))) {
+          btn.className = "category-btn active px-3.5 py-2 rounded-xl border bg-blue-600 text-white border-blue-600 whitespace-nowrap transition-all shadow-sm";
+        } else {
+          btn.className = "category-btn px-3.5 py-2 rounded-xl border bg-white text-slate-600 border-slate-200 whitespace-nowrap hover:bg-slate-50 transition-all";
+        }
+      });
+
+      filterReviews();
+    }
+
+    function clearSearchInput() {
+      document.getElementById('searchInput').value = '';
+      filterReviews();
+    }
+
+    // Copy & Redirect Action
+    function copyAndRedirect(reviewText) {
+      // 1. Copy to clipboard
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(reviewText).then(() => {
+          showToastAndRedirect();
+        }).catch(() => {
+          fallbackCopy(reviewText);
+        });
+      } else {
+        fallbackCopy(reviewText);
+      }
+    }
+
+    function fallbackCopy(reviewText) {
+      const textArea = document.createElement("textarea");
+      textArea.value = reviewText;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      showToastAndRedirect();
+    }
+
+    function showToastAndRedirect() {
+      const toast = document.getElementById('toast');
+      
+      // Show toast
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      // Redirect after 1.2 seconds
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 1100);
+    }
+
+    // Initial Render
+    renderReviews(reviewData);
+  </script>
+</body>
+</html>
